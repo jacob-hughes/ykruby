@@ -10,6 +10,7 @@
 **********************************************************************/
 
 #include <math.h>
+#include <yk.h>
 
 #if USE_YJIT
 // The number of instructions executed on vm_exec_core. --yjit-stats uses this.

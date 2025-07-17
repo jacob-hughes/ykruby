@@ -2837,6 +2837,21 @@ iseq_set_sequence(rb_iseq_t *iseq, LINK_ANCHOR *const anchor)
     body->iseq_encoded = (void *)generated_iseq;
     body->iseq_size = code_index;
     body->stack_max = stack_max;
+    body->yklocs = calloc(code_index, sizeof(YkLocation));
+    unsigned int pos = 0;
+    while (pos < code_index) {
+        int opcode = rb_vm_insn_addr2opcode((void *)body->iseq_encoded[pos]);
+        const VALUE instr = body->iseq_encoded[pos];
+        switch(instr) {
+            case BIN(jump):
+              body->yklocs[pos] = yk_location_new();
+              break;
+            default:
+              body->yklocs[pos] = yk_location_null();
+              break;
+        }
+        pos = pos + insn_len(opcode);
+    }
 
     if (ISEQ_COMPILE_DATA(iseq)->is_single_mark_bit) {
         body->mark_bits.single = ISEQ_COMPILE_DATA(iseq)->mark_bits.single;

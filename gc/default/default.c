@@ -19,6 +19,7 @@
 
 #include "ruby/ruby.h"
 #include "ruby/atomic.h"
+#include "yk.h"
 #include "ruby/debug.h"
 #include "ruby/thread.h"
 #include "ruby/util.h"
@@ -4520,6 +4521,11 @@ pin_value(st_data_t key, st_data_t value, st_data_t data)
     return ST_CONTINUE;
 }
 
+void mark_locs(void* start, void* end) {
+    rb_gc_mark_locations(((const VALUE *) start), ((const VALUE *) end));
+}
+
+
 static void
 mark_roots(rb_objspace_t *objspace, const char **categoryp)
 {
@@ -4538,6 +4544,8 @@ mark_roots(rb_objspace_t *objspace, const char **categoryp)
 
     rb_gc_save_machine_context();
     rb_gc_mark_roots(objspace, categoryp);
+    // yk_foreach_shadowstack(mark_locs);
+
 }
 
 static inline void

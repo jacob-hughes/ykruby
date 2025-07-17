@@ -135,7 +135,11 @@ case BIN(insn):
   break;
 
 #define INSN_DISPATCH()         \
+  YkMT *mt = yk_mt_new(NULL); \
+  yk_mt_hot_threshold_set(mt, 0); \
   while (1) {			\
+    int pc = (GET_PC() - ISEQ_BODY(reg_cfp->iseq)->iseq_encoded); \
+    yk_mt_control_point(mt, &ISEQ_BODY(reg_cfp->iseq)->yklocs[pc]); \
     switch (GET_CURRENT_INSN()) {
 
 #define END_INSNS_DISPATCH()    \
